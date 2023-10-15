@@ -52,11 +52,7 @@ struct DiagonalLayout: Layout {
             let screenHeight = bounds.size.height
             let size = screenHeight / Double(subviews.count)
 
-            var x = bounds.origin.x
-            if index > 0 {
-                x = x + Double(index) * (bounds.size.width - size) / Double(subviews.count - 1)
-            }
-
+            let x = Double(index) * (bounds.size.width - size) / Double(subviews.count - 1)
             let y = screenHeight - size - Double(index) * screenHeight / Double(subviews.count) + bounds.origin.y
 
             subview.place(
