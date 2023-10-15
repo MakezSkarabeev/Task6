@@ -7,43 +7,6 @@
 
 import SwiftUI
 
-struct DiagonalLayout: Layout {
-    func sizeThatFits(
-        proposal: ProposedViewSize,
-        subviews: Subviews,
-        cache: inout ()
-    ) -> CGSize {
-        CGSize(width: proposal.width ?? 0, height: proposal.height ?? 0)
-    }
-
-    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-        for (index, subview) in subviews.enumerated() {
-            let screenHeight = bounds.size.height
-            let size = screenHeight / Double(subviews.count)
-
-            let x: Double
-            if index > 0 {
-                x = Double(index) * (bounds.size.width - size) / Double(subviews.count - 1) + bounds.origin.x
-            } else {
-                x = 0 + bounds.origin.x
-            }
-
-
-            let y = screenHeight - size - Double(index) * screenHeight / Double(subviews.count) + bounds.origin.y
-
-            subview.place(
-                at: CGPoint(x: x, y: y),
-                proposal: ProposedViewSize(CGSize(width: size, height: size))
-            )
-        }
-    }
-}
-
-enum LayoutKind: Int, CaseIterable {
-    case diagonal
-    case horizontal
-}
-
 struct ContentView: View {
     @State private var isPressed = false
 
@@ -66,6 +29,40 @@ struct ContentView: View {
                     }
                 }
             }
+        }
+    }
+}
+
+struct DiagonalLayout: Layout {
+    func sizeThatFits(
+        proposal: ProposedViewSize,
+        subviews: Subviews,
+        cache: inout ()
+    ) -> CGSize {
+        CGSize(width: proposal.width ?? 0, height: proposal.height ?? 0)
+    }
+
+    func placeSubviews(
+        in bounds: CGRect,
+        proposal: ProposedViewSize,
+        subviews: Subviews,
+        cache: inout ()
+    ) {
+        for (index, subview) in subviews.enumerated() {
+            let screenHeight = bounds.size.height
+            let size = screenHeight / Double(subviews.count)
+
+            var x = bounds.origin.x
+            if index > 0 {
+                x = x + Double(index) * (bounds.size.width - size) / Double(subviews.count - 1)
+            }
+
+            let y = screenHeight - size - Double(index) * screenHeight / Double(subviews.count) + bounds.origin.y
+
+            subview.place(
+                at: CGPoint(x: x, y: y),
+                proposal: ProposedViewSize(CGSize(width: size, height: size))
+            )
         }
     }
 }
